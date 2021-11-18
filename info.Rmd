@@ -1,0 +1,24 @@
+---
+title: "App reference details"
+output: html_document
+---
+
+Please see this pre-print or contact the authors for app details:
+
+McBryde E.S., Meehan M.T., Ragonnet R., Jayasundara P., Adekunle A. I., Kuddus M. A., Ogunlade S. , Caldwell J.M., Trauer J.M., Cope R.C. (2021) Modelling direct and herd protection effects of vaccination against the SARS-CoV-2 Delta variant in Australia. *Med J Aust.*
+
+Source code and data implementing the methods used here is available at:
+https://github.com/michaeltmeehan/covid19/tree/main/immunization_australia
+
+Please note that confidence intervals around vaccine efficacy are only available for the Pfizer and AstraZeneca vaccines due to the amount of literature available.
+
+Where public health measures are anticipated to reduce transmission, the resulting R_eff should be used in the place of R_0 in this tool. 
+
+
+### Disclaimer
+
+The team that authored this app, and the organisations that employ them, accept no responsibility for the results of any actions taken on the basis of information on this website, nor for the accuracy or completeness of any material contained herein. 
+
+Please note this app may discontinue or vary at any time without notice.
+
+This website contains links to external organisations and information. The team that authored this app, and the organisations that employ them, do not accept responsibility for, nor endorse, the content of any linked site.

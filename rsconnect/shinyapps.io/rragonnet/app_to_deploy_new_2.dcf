@@ -1,0 +1,13 @@
+name: app_to_deploy_new_2
+title: app_to_deploy_new_2
+username:
+account: rragonnet
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5065717
+bundleId: 5264852
+url: https://rragonnet.shinyapps.io/app_to_deploy_new_2/
+when: 1637204182.71937
+lastSyncTime: 1637204182.71937
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,13 @@
+name: phl_covid_vacc_app
+title: phl_covid_vacc_app
+username:
+account: rragonnet
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5065151
+bundleId: 5224809
+url: https://rragonnet.shinyapps.io/phl_covid_vacc_app/
+when: 1636331545.3097
+lastSyncTime: 1636331545.3097
+asMultiple: FALSE
+asStatic: FALSE
