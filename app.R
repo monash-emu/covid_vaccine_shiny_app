@@ -47,10 +47,10 @@ ui <- fluidPage(
                   c('Delta','wild-type')),
       
       sliderInput('R0',
-                  "R0:",
+                  "Reproduction number (R_eff):",
                   0,8,4.5,step=0.05),
       
-      h3("Pre-existing natural immunity"),
+      h3("Pre-existing infection-induced immunity"),
       sliderInput('seroprevalence_0_14',
                   "0-14 years old:",
                   0,100,0,post  = " %"),
@@ -89,10 +89,10 @@ ui <- fluidPage(
       
       sliderInput('coverage_1',
                   'Coverage Scenario 1',
-                  value = 0., step=0.05,min=0,max=1),
+                  value = 0, step=5,min=0,max=100, post=" %"),
       sliderInput('coverage_2',
                 'Coverage Scenario 2:',
-                 value = 0.6, step=0.05,min=0,max=1)
+                 value = 60, step=5,min=0,max=100, post=" %")
     ),
     
     # Show a plot of the generated distribution
@@ -113,6 +113,10 @@ ui <- fluidPage(
                           plotOutput('countryDemoPlot', width = 600, height = 500),
                           plotOutput('countryContactPlot')),
                  
+                 tabPanel("Explanatory notes",
+                          includeMarkdown("notes.Rmd")
+                 ),
+                 
                  tabPanel("Reference",
                           includeMarkdown("info.Rmd")
                  )
@@ -124,8 +128,6 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
-  
   c1 <- reactive(get_params(country = "Philippines",
                             vaccine_1=input$vacc_1,
                             vaccine_2=input$vacc_1,
@@ -140,7 +142,7 @@ server <- function(input, output) {
                  )
   p1 <- reactive(if(input$vacc_1 == input$vacc_1){
     calc_targets_ages(c1(),
-                      target_coverages = c(input$coverage_1, input$coverage_2, input$coverage_2),
+                      target_coverages = c(input$coverage_1/100., input$coverage_2/100., input$coverage_2/100.),
                       uptake=1.0, #input$uptake,
                       cutoff = 60, # strtoi(input$cutoff_between),
                       eligibility_cutoff = input$eligible_age,
@@ -151,7 +153,7 @@ server <- function(input, output) {
     
   } else {
     calc_targets_ages(c1(),
-                      target_coverages = c(input$coverage_1, input$coverage_2, input$coverage_2),
+                      target_coverages = c(input$coverage_1/100., input$coverage_2/100., input$coverage_2/100.),
                       uptake=1.0,  #input$uptake,
                       cutoff = 60, # strtoi(input$cutoff_between),
                       eligibility_cutoff = input$eligible_age,
@@ -201,7 +203,9 @@ server <- function(input, output) {
       theme_bw(base_size = 18)+
       labs(y = 'rate per 100,000 population',
            x = 'Age group')+
-      facet_grid(vaccine+event~coverage,scales='free_y')+
+      #facet_grid(vaccine+event~coverage,scales='free_y')+
+      facet_grid(event~coverage,scales='free_y', labeller=facet_labeller)+
+      
       theme(axis.text.x = element_text(angle = -90),
             legend.position = 'top')+
       expand_limits(y = c(0,100))
@@ -241,7 +245,9 @@ server <- function(input, output) {
       ggplot( aes(x=strategy,y = rate, fill = forcats::fct_reorder(age_group_p,age_group_ind2, min)))+
       geom_col(col = 'black',position = position_stack(reverse = TRUE))+
       coord_flip()+
-      facet_grid(vaccine+coverage~event,scales='free_x')+
+      # facet_grid(vaccine+coverage~event,scales='free_x')+
+      facet_grid(coverage~event,scales='free_x',  labeller=facet_labeller)+
+      
       ylim(c(0,NA)) +
       theme_bw(base_size = 18)+
       labs(y = 'rate per 100,000 population',
@@ -276,8 +282,8 @@ server <- function(input, output) {
   })
   
   output$coveragePlot <- renderPlot({
-    p2() %>% plot_targets(l1 = input$coverage_1,
-                          l2 = input$coverage_2)
+    p2() %>% plot_targets(l1 = input$coverage_1/100.,
+                          l2 = input$coverage_2/100.)
     # generate bins based on input$bins from ui.R
     # p2() %>% 
     #   pivot_longer(cols = 5:6,

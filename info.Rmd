@@ -3,9 +3,13 @@ title: "App reference details"
 output: html_document
 ---
 
-Please see this pre-print or contact the authors for app details:
+Please see the article below or contact the authors for app details:
 
-McBryde E.S., Meehan M.T., Ragonnet R., Jayasundara P., Adekunle A. I., Kuddus M. A., Ogunlade S. , Caldwell J.M., Trauer J.M., Cope R.C. (2021) Modelling direct and herd protection effects of vaccination against the SARS-CoV-2 Delta variant in Australia. *Med J Aust.*
+
+[**Modelling direct and herd protection effects of vaccination against the SARS‐CoV‐2 Delta variant in Australia**](https://www.mja.com.au/journal/2021/215/9/modelling-direct-and-herd-protection-effects-vaccination-against-sars-cov-2)
+
+Emma S McBryde, Michael T Meehan, Jamie M Caldwell, Adeshina I Adekunle, Samson T Ogunlade, MD Abdul Kuddus, Romain Ragonnet, Pavithra Jayasundara, James M Trauer and Robert C Cope. 
+*Med J Aust* 2021; 215 (9): 427-432. || doi: 10.5694/mja2.51263
 
 Source code and data implementing the methods used here is available at:
 https://github.com/michaeltmeehan/covid19/tree/main/immunization_australia

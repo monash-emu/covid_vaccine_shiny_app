@@ -266,7 +266,10 @@ plot_targets = function(out,l1=NA,l2=NA) {
     geom_ribbon(aes(ymin = lower, ymax = upper),
                 alpha = 0.1,
                 colour = NA) +
-    facet_grid(Target ~ Vaccine, scales = "free") +
+    # facet_grid(Target ~ Vaccine, scales = "free") +
+    facet_grid(Target ~ ., scales = "free") +
+    
+    
     ylab("Cases per 100,000 population") +
     xlab("Target Coverage") +
     scale_x_continuous(
@@ -374,8 +377,6 @@ calc_targets_ages = function(params,
         
         
         
-        
-        print(vacc_prop)
     #     if (include_children) {
     #   vacc_prop = calc_age_specific_coverage_children_included(
     #     target_coverage = out$Coverage[x],
@@ -504,3 +505,13 @@ calc_targets_ages = function(params,
   
   return(do.call(bind_rows,everything))
 }
+
+
+facet_labeller <- function(variable,value){
+  if (variable=='coverage') {
+    return(paste(value*100, "% coverage", sep=""))
+  } else {
+    return(as.character(value))
+  }
+}
+
