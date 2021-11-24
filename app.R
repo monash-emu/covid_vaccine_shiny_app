@@ -47,8 +47,17 @@ ui <- fluidPage(
                   c('Delta','wild-type')),
       
       sliderInput('R0',
-                  "Reproduction number (R_eff):",
+                  "Basic Reproduction number (R0):",
                   0,8,4.5,step=0.05),
+      
+      sliderInput('mobility',
+                  "Inter-personnal interactions (relative to pre-COVID era):",
+                  0,100,80,step=5,post  = " %"),
+      
+      sliderInput('microdistancing',
+                  "Reduction in per contact transmission risk (face masks, hand washing...)",
+                  0,100,20,step=5,post  = " %"),
+      
       
       h3("Pre-existing infection-induced immunity"),
       sliderInput('seroprevalence_0_14',
@@ -132,7 +141,7 @@ server <- function(input, output) {
                             vaccine_1=input$vacc_1,
                             vaccine_2=input$vacc_1,
                             strain=input$strain,
-                            R0 = input$R0,
+                            R0 = input$R0 * (input$mobility /100.) * (1 - input$microdistancing /100.),
                             seropositivity = c(
                               rep(input$seroprevalence_0_14/100.0,3),
                               rep(input$seroprevalence_15_59/100.0, 9),
