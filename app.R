@@ -70,6 +70,9 @@ ui <- fluidPage(
                   "60 years old and over:",
                   0,100,0,post  = " %"),
       
+      h3("Modelled effective reproduction number:"),
+      span(textOutput("r_eff"), style="font-weight: bold; font-size: large;"),
+      
       ##############################################################
       hr(style = HR_STYLE),
       h2("Vaccination Program Characteristics"),
@@ -149,6 +152,7 @@ server <- function(input, output) {
                             )
                               )
                  )
+  
   p1 <- reactive(if(input$vacc_1 == input$vacc_1){
     calc_targets_ages(c1(),
                       target_coverages = c(input$coverage_1/100., input$coverage_2/100., input$coverage_2/100.),
@@ -191,6 +195,12 @@ server <- function(input, output) {
                                            paste0(input$vacc_1," only"),
                                            'Mix'))})
   ))
+  
+  output$r_eff <- renderText({
+    calc_Reff(
+      c1()
+    )
+  })
   
   output$ptext <- renderTable({print(p1())})
   output$agePlot <- renderPlot({
