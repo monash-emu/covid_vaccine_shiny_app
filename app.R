@@ -28,6 +28,8 @@ HR_STYLE = "border-top: 2px solid #000000;"
 countrypops <- list.dirs('./data/prem_2020',full.names=FALSE, recursive=FALSE)
 
 vaccDF <- readxl::read_xlsx("./data/strain_specific_vaccine_efficacy.xlsx", sheet = 1) 
+vacc_types = stri_enc_toascii(vaccDF$vaccine)
+
 #ages <- age_groups
 ages <- read_csv('./data/ages.csv')
 
@@ -38,7 +40,7 @@ ui <- fluidPage(
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
-    sidebarPanel( style = "background-color: #FEF4E8;",
+    sidebarPanel( style = "background-color: #FEF4E8;", width = 4,
 
       h2("Epidemiological Situation"),
       
@@ -77,10 +79,29 @@ ui <- fluidPage(
       hr(style = HR_STYLE),
       h2("Vaccination Program Characteristics"),
       
+      #Dynamic number of vaccine inputs
+      sliderInput(
+        "n_vaccines",
+        "N vaccine types",
+        min = 1, max=length(vacc_types),value=1,step=1
+      ),
+      
+      fluidRow(
+        column(6,
+               mainPanel(uiOutput("vacc_type_ui"))      
+        ),
+        column(6,
+               mainPanel(uiOutput("vacc_perc_ui"))      
+        ),
+      ),
+      
+      span(textOutput("sum_vacc_percs"), style="font-size: medium; color: red;"),
+      
+      # Old code
       selectInput("vacc_1",
                   "Vaccine used:",
-                  stri_enc_toascii(vaccDF$vaccine),
-                  stri_enc_toascii(vaccDF$vaccine)[1]),
+                  vacc_types,
+                  vacc_types[1]),
       #selectInput("vacc_2",
       #            "Vaccine 2 (ages >cutoff):",
       #            stri_enc_toascii(vaccDF$vaccine),
@@ -140,6 +161,62 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  #FIXME dynamic number of vaccine inputs
+
+  vacc_type_selectors <- reactive({
+    n <- input$n_vaccines
+    
+    default_vacc_type = vacc_types[1]
+    lapply(seq_len(n), function(i) {
+        selectInput(
+          paste0("vaccine", i),
+          paste0("Vaccine ", i),
+          vacc_types,
+          selected = default_vacc_type
+        )
+      })
+  
+  })
+  
+  vacc_perc_selectors<- reactive({
+    n <- input$n_vaccines
+    
+    lapply(seq_len(n), function(i) {
+      numericInput(
+        paste0("vacc_perc ", i),
+        paste0("% Vaccine ", i),
+        value=0,
+        min=0,
+        max=100,
+        step=1
+      )
+    })
+    
+  })
+  
+  sum_of_vacc_percs <- reactive({
+    sum = 0
+    for (i in 1:input$n_vaccines){
+      input_name = paste0("vacc_perc ", i)
+      sum = sum + input[[input_name]]
+    }
+    return(sum)
+  })
+  
+  output$sum_vacc_percs <- renderText({
+    s = sum_of_vacc_percs()
+    display = ""
+    if (length(s) == 0 || s != 100){
+      display = paste0("Sum of vaccine percentages should be 100. Current sum: ", s, "%")
+    }  
+    return(display)
+    }
+  )
+
+  output$vacc_type_ui <- renderUI({ vacc_type_selectors() })
+  output$vacc_perc_ui <- renderUI({ vacc_perc_selectors() })
+  
+  
   c1 <- reactive(get_params(country = "Philippines",
                             vaccine_1=input$vacc_1,
                             vaccine_2=input$vacc_1,
