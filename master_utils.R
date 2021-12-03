@@ -9,10 +9,9 @@ calc_targets = function(params,
                         targets = c("Infections", "Hospitalizations", "Deaths"),
                         strategies = c("Uniform", "Vulnerable", "Transmitters"),
                         target_coverages = seq(0, 1.0, 0.2),
-                        vaccine_combinations = list(
-                          "Pfizer" = c("BNT162b2", "BNT162b2"),
-                          "AstraZeneca" = c("ChAdOx1", "ChAdOx1"),
-                          "Mix" = c("BNT162b2", "ChAdOx1")
+                        vacc_program = list(
+                          "vacc_types"=c("Pfizer", "Sinovac"), 
+                          "vacc_percs" = c(20, 80)
                         ),
                         eligibility_cutoff = 15,
                         #include_children = FALSE,
@@ -20,7 +19,7 @@ calc_targets = function(params,
                         cutoff = 60) {
   out = expand.grid(
     Strategy = strategies,
-    Vaccine = names(vaccine_combinations),
+    Vaccine = list("any vacc"=c("any vacc")),
     Coverage = target_coverages
   )
   
@@ -74,14 +73,10 @@ calc_targets = function(params,
     #     uptake = uptake
     #   )
     # }
-    # Determine current vaccine combination
-    vacc_comb = vaccine_combinations[[out$Vaccine[i]]]
-    
+
     # Update the vaccine efficacy given the current vaccine combination
-    params_central$efficacy = import_efficacy_data(params$strain,
-                                                   vaccine_1 = vacc_comb[1],
-                                                   vaccine_2 = vacc_comb[2],
-                                                   cutoff = cutoff)
+    params_central$efficacy = import_mixed_efficacy_data(params$strain,
+                                                         vacc_program)
     
     # if(vacc_comb[1] %in% c("Pfizer", "AstraZeneca") & vacc_comb[2] %in% c("Pfizer", "AstraZeneca")){
     #   params_lower$efficacy = import_efficacy_data(
@@ -109,14 +104,12 @@ calc_targets = function(params,
     # }
     
     params_lower = get_params(params$country,R0 = params$R0-1,
-                              vaccine_1 = vacc_comb[1],
-                              vaccine_2 = vacc_comb[2],
+                              vacc_program=vacc_program,
                               seropositivity = params$seropositivity,
                               strain = params$strain)
     
     params_upper = get_params(params$country,R0 = params$R0+1,
-                              vaccine_1 = vacc_comb[1],
-                              vaccine_2 = vacc_comb[2],
+                              vacc_program=vacc_program,
                               seropositivity = params$seropositivity,
                               strain = params$strain)
     
@@ -322,10 +315,9 @@ calc_targets_ages = function(params,
                         targets = c("Infections", "Hospitalizations", "Deaths"),
                         strategies = c("Uniform", "Vulnerable", "Transmitters"),
                         target_coverages = seq(0, 1.0, 0.2),
-                        vaccine_combinations = list(
-                          "Pfizer" = c("BNT162b2", "BNT162b2"),
-                          "AstraZeneca" = c("ChAdOx1", "ChAdOx1"),
-                          "Mix" = c("BNT162b2", "ChAdOx1")
+                        vacc_program = list(
+                          "vacc_types"=c("Pfizer", "Sinovac"), 
+                          "vacc_percs" = c(20, 80)
                         ),
                         eligibility_cutoff = 15,
                         #include_children = FALSE,
@@ -333,7 +325,7 @@ calc_targets_ages = function(params,
                         cutoff = 60) {
   out = expand.grid(
     Strategy = strategies,
-    Vaccine = names(vaccine_combinations),
+    Vaccine = list("any vacc"=c("any vacc")),
     Coverage = target_coverages
   )
   
@@ -392,14 +384,10 @@ calc_targets_ages = function(params,
     #     uptake = uptake
     #   )
     # }
-    # Determine current vaccine combination
-    vacc_comb = vaccine_combinations[[out$Vaccine[x]]]
-    
+
     # Update the vaccine efficacy given the current vaccine combination
-    params_central$efficacy = import_efficacy_data(params$strain,
-                                                   vaccine_1 = vacc_comb[1],
-                                                   vaccine_2 = vacc_comb[2],
-                                                   cutoff = cutoff)
+    params_central$efficacy = import_mixed_efficacy_data(params$strain,
+                                                   vacc_program=vacc_program)
     
     
     # if(vacc_comb[1] %in% c("Pfizer", "AstraZeneca") & vacc_comb[2] %in% c("Pfizer", "AstraZeneca")){
@@ -435,14 +423,12 @@ calc_targets_ages = function(params,
     # 
     
     params_lower = get_params(params$country,R0 = params$R0-1,
-                              vaccine_1 = vacc_comb[1],
-                              vaccine_2 = vacc_comb[2],
+                              vacc_program=vacc_program,
                               seropositivity = params$seropositivity,
                               strain = params$strain)
     
     params_upper = get_params(params$country,R0 = params$R0+1,
-                              vaccine_1 = vacc_comb[1],
-                              vaccine_2 = vacc_comb[2],
+                              vacc_program=vacc_program,
                               seropositivity = params$seropositivity,
                               strain = params$strain)
     
@@ -515,3 +501,13 @@ facet_labeller <- function(variable,value){
   }
 }
 
+get_default_vacc_perc <- function(n, i){
+  
+  round_share = floor(100./n)
+  if (i>1){
+    return (round_share)
+  }else{
+    return (100 - round_share*(n-1))
+  }
+  
+}

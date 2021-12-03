@@ -21,6 +21,7 @@ library(tidyverse)
 library(stringi)
 source('./master_utils.R')
 
+
 library(markdown)
 
 HR_STYLE = "border-top: 2px solid #000000;"
@@ -98,10 +99,10 @@ ui <- fluidPage(
       span(textOutput("sum_vacc_percs"), style="font-size: medium; color: red;"),
       
       # Old code
-      selectInput("vacc_1",
-                  "Vaccine used:",
-                  vacc_types,
-                  vacc_types[1]),
+      #selectInput("vacc_1",
+      #            "Vaccine used:",
+      #            vacc_types,
+      #            vacc_types[1]),
       #selectInput("vacc_2",
       #            "Vaccine 2 (ages >cutoff):",
       #            stri_enc_toascii(vaccDF$vaccine),
@@ -166,13 +167,12 @@ server <- function(input, output) {
   vacc_type_selectors <- reactive({
     n <- input$n_vaccines
     
-    default_vacc_type = vacc_types[1]
     lapply(seq_len(n), function(i) {
         selectInput(
           paste0("vaccine", i),
           paste0("Vaccine ", i),
           vacc_types,
-          selected = default_vacc_type
+          selected = vacc_types[i]
         )
       })
   
@@ -185,7 +185,7 @@ server <- function(input, output) {
       numericInput(
         paste0("vacc_perc ", i),
         paste0("% Vaccine ", i),
-        value=0,
+        value=get_default_vacc_perc(n,i),
         min=0,
         max=100,
         step=1
@@ -213,13 +213,27 @@ server <- function(input, output) {
     }
   )
 
+  vacc_program <- reactive({
+    vacc_types = c()
+    vacc_percs = c()
+    for (i in 1:input$n_vaccines){
+      type_input_name = paste0("vaccine", i)
+      vacc_types = c(vacc_types, input[[type_input_name]])
+      
+      perc_input_name = paste0("vacc_perc ", i)
+      vacc_percs = c(vacc_percs, input[[perc_input_name]])
+      
+    }
+    
+    return(list("vacc_types"=vacc_types, "vacc_percs"=vacc_percs))
+  })
+  
   output$vacc_type_ui <- renderUI({ vacc_type_selectors() })
   output$vacc_perc_ui <- renderUI({ vacc_perc_selectors() })
   
   
   c1 <- reactive(get_params(country = "Philippines",
-                            vaccine_1=input$vacc_1,
-                            vaccine_2=input$vacc_1,
+                            vacc_program=vacc_program(),
                             strain=input$strain,
                             R0 = input$R0 * (input$mobility /100.) * (input$microdistancing /100.),
                             seropositivity = c(
@@ -230,47 +244,21 @@ server <- function(input, output) {
                               )
                  )
   
-  p1 <- reactive(if(input$vacc_1 == input$vacc_1){
+  p1 <- reactive(
     calc_targets_ages(c1(),
                       target_coverages = c(input$coverage_1/100., input$coverage_2/100., input$coverage_2/100.),
                       uptake=1.0, #input$uptake,
                       cutoff = 60, # strtoi(input$cutoff_between),
                       eligibility_cutoff = input$eligible_age,
-                      vaccine_combinations = (
-                        setNames(list(c(input$vacc_1, input$vacc_1)),
-                                 c(paste0(input$vacc_1," only"))))
+                      vacc_program = vacc_program()
     )
-    
-  } else {
-    calc_targets_ages(c1(),
-                      target_coverages = c(input$coverage_1/100., input$coverage_2/100., input$coverage_2/100.),
-                      uptake=1.0,  #input$uptake,
-                      cutoff = 60, # strtoi(input$cutoff_between),
-                      eligibility_cutoff = input$eligible_age,
-                      vaccine_combinations = (
-                        setNames(list(c(input$vacc_1, input$vacc_1),
-                                      c(input$vacc_1, input$vacc_1),
-                                      c(input$vacc_1, input$vacc_1)),
-                                 c(paste0(input$vacc_1," only"),
-                                   paste0(input$vacc_1," only"),
-                                   'Mix')))
-    )
-  } )
+   )
   p2 <- reactive(calc_targets(c1(),
                               target_coverages = seq(0,1,by=0.05),
                               uptake=1.0, #input$uptake,
                               cutoff = 60., # strtoi(input$cutoff_between),
                               eligibility_cutoff = input$eligible_age,
-                              vaccine_combinations = (if(input$vacc_1 == input$vacc_1){
-                                setNames(list(c(input$vacc_1, input$vacc_1)),
-                                         c(paste0(input$vacc_1," only")))
-                              } else {
-                                setNames(list(c(input$vacc_1, input$vacc_1),
-                                              c(input$vacc_1, input$vacc_1),
-                                              c(input$vacc_1, input$vacc_1)),
-                                         c(paste0(input$vacc_1," only"),
-                                           paste0(input$vacc_1," only"),
-                                           'Mix'))})
+                              vacc_program = vacc_program()
   ))
   
   output$r_eff <- renderText({

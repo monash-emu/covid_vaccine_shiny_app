@@ -105,10 +105,44 @@ import_efficacy_data = function(strain, vaccine_1, vaccine_2 = NULL,
 }
 
 
+import_mixed_efficacy_data = function(strain, vacc_program){
+  # vacc_program = list("vacc_types"=c("Pfizer", "Sinovac"), "vacc_percs" = c(20, 80))
+  
+  efficacy_data = openxlsx::read.xlsx("./data/strain_specific_vaccine_efficacy.xlsx",
+                                      sheet = strain)
+  
+
+  Vinf=0
+  Vsev=0
+  Vtrans=0
+  Vmor=0
+  
+  n = length(vacc_program$vacc_types)  
+  if (n>0){
+    for (i in 1:n){
+      vacc_type = vacc_program$vacc_types[i]
+      prop = vacc_program$vacc_percs[i] / 100.
+      Vinf = Vinf + efficacy_data[efficacy_data$vaccine == vacc_type,]$Vinf * prop
+      Vsev = Vsev + efficacy_data[efficacy_data$vaccine == vacc_type,]$Vsev * prop
+      Vtrans = Vtrans + efficacy_data[efficacy_data$vaccine == vacc_type,]$Vtrans * prop
+      Vmor = Vmor + efficacy_data[efficacy_data$vaccine == vacc_type,]$Vmor * prop
+    }
+  }
+
+  
+  return(list(
+    "Vinf" = rep(Vinf, 16),
+    "Vsev" = rep(Vsev, 16),
+    "Vtrans" = rep(Vtrans, 16),
+    "Vmor" = rep(Vmor, 16)
+  ))
+
+}
+
+
 # Import all parameters
 get_params = function(country,
-                      vaccine_1 = "BNT162b2",
-                      vaccine_2 = NULL,
+                      vacc_program,
                       strain = "Delta",
                       R0 = 5,
                       rel_infectious = 0.25,
@@ -124,7 +158,7 @@ get_params = function(country,
     population_size = import_pop_data(country),
     contact_matrix = import_contact_data(country),
     epi = import_epi_data(strain),
-    efficacy = import_efficacy_data(strain, vaccine_1, vaccine_2),
+    efficacy = import_mixed_efficacy_data(strain, vacc_program),
     rel_infectious = rel_infectious,
     R0 = R0,
     period = period,
