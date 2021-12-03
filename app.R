@@ -17,6 +17,8 @@ user <- unname(Sys.info()["user"])
 
 
 library(shiny)
+library(shinyWidgets)
+
 library(tidyverse)
 library(stringi)
 source('./master_utils.R')
@@ -49,9 +51,25 @@ ui <- fluidPage(
                   "Strain:",
                   c('Delta','wild-type')),
       
-      sliderInput('R0',
-                  "Basic Reproduction number (R0):",
-                  0,10,4.5,step=0.1),
+      fluidRow(
+        column(
+          11,
+          sliderInput('R0',
+                      "Basic Reproduction number (R0):",
+                      0,10,4.5,step=0.1)
+        ),
+        column(
+          1,
+          dropdownButton(
+            tags$h3("Text here"),
+            
+            size="xs",
+            circle = TRUE, status = "danger",
+            icon = icon("info")
+            
+          )
+        )
+      ),
       
       sliderInput('mobility',
                   "Inter-personnal interactions (relative to pre-COVID era):",
