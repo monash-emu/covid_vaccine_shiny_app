@@ -1,0 +1,8 @@
+---
+title: "Info"
+output: html_document
+---
+
+
+### Pre-existing infection-induced immunity
+The proportion of an age group that, due to a previous infection with SARS-CoV-2, is assumed to have immunity against re-infection with SARS-CoV-2. 

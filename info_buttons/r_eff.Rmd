@@ -1,0 +1,8 @@
+---
+title: "Info"
+output: html_document
+---
+
+
+### Modelled effective reproduction number
+The reproduction number obtained after accounting for the level of inter-personal interactions, the relative transmission risk per contact and pre-existing immunity.

@@ -64,16 +64,44 @@ ui <- fluidPage(
         )
       ),
       
-      sliderInput('mobility',
-                  "Inter-personnal interactions (relative to pre-COVID era):",
-                  0,100,80,step=5,post  = " %"),
+      fluidRow(
+        column(
+          11,
+          sliderInput('mobility',
+                      "Inter-personnal interactions (relative to pre-COVID era):",
+                      0,100,80,step=5,post  = " %")
+        ),
+        column(
+          1,
+          make_info_button("mobility")
+        )
+      ),
       
-      sliderInput('microdistancing',
-                  "Relative transmission risk per contact (reduced by individual preventive measures such as masks or hand washing). 100% = no preventive measure",
-                  0,100,80,step=5,post  = " %"),
       
+      fluidRow(
+        column(
+          11,
+          sliderInput('microdistancing',
+                      "Relative transmission risk per contact (reduced by individual preventive measures such as masks or hand washing). 100% = no preventive measure",
+                      0,100,80,step=5,post  = " %")
+        ),
+        column(
+          1,
+          make_info_button("microdistancing")
+        )
+      ),
       
-      h3("Pre-existing infection-induced immunity"),
+      fluidRow(
+        column(
+          11,
+          h3("Pre-existing infection-induced immunity")
+        ),
+        column(
+          1,
+          make_info_button("immunity")
+        )
+      ),
+      
       sliderInput('seroprevalence_0_14',
                   "0-14 years old:",
                   0,100,0,post  = " %"),
@@ -84,12 +112,33 @@ ui <- fluidPage(
                   "60 years old and over:",
                   0,100,0,post  = " %"),
       
-      h3("Modelled effective reproduction number:"),
+      fluidRow(
+        column(
+          11,
+          h3("Modelled effective reproduction number:")
+          
+        ),
+        column(
+          1,
+          make_info_button("r_eff")
+        )
+      ),
       span(textOutput("r_eff"), style="font-weight: bold; font-size: large;"),
       
       ##############################################################
       hr(style = HR_STYLE),
-      h2("Vaccination Program Characteristics"),
+      
+      fluidRow(
+        column(
+          11,
+          h2("Vaccination Program Characteristics")
+          
+        ),
+        column(
+          1,
+          make_info_button("vacc_program")
+        )
+      ),
       
       #Dynamic number of vaccine inputs
       sliderInput(
@@ -130,7 +179,17 @@ ui <- fluidPage(
       
       ##########################################################
       hr(style = HR_STYLE),
-      h2("Coverage Scenarios"),
+      fluidRow(
+        column(
+          11,
+          h2("Coverage Scenarios")
+          
+        ),
+        column(
+          1,
+          make_info_button("coverage")
+        )
+      ),
       
       sliderInput('coverage_1',
                   'Coverage Scenario 1',

@@ -522,9 +522,9 @@ make_info_button <- function(name){
   #tags$h3("Text here"),
   
     size="xs",
-    circle = TRUE, status = "danger",
+    circle = TRUE, status = "primary",
     icon = icon("info"),
-    width="10%"
+    width="25vw"
   
   )
 }

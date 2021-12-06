@@ -1,0 +1,8 @@
+---
+title: "mobility"
+output: html_document
+---
+
+### Inter-personal interactions
+This parameter defines the level of interactions between individuals. 
+The average daily number of contacts is informed by an age-specific contact matrix obtained from the extrapolation of contact survey data collected before the COVID-19 pandemic. The parameter associated with this slider acts as a multiplier to this contact matrix. A value of 100% is associated with a level of interaction equivalent to that observed before the COVID-19 pandemic. A value of 0% represents a situation with no inter-personal contacts at all.

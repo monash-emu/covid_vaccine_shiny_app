@@ -1,0 +1,9 @@
+---
+title: "Info"
+output: html_document
+---
+
+
+### Vaccination Program Characteristics
+This parameter is used in combination with the selected variant to select the vaccine efficacy parameters based on published estimates. 
+The model incorporates the impact of vaccination on symptomatic infection, hospitalisation, death and onward transmission. The modelled vaccine efficacy parameters are calculated using weighted averages of the efficacy parameters of the different vaccines included in the selected program. 

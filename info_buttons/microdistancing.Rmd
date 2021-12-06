@@ -1,0 +1,8 @@
+---
+title: "Info"
+output: html_document
+---
+
+### Relative transmission risk per contact
+This parameter varies the modelled risk of SARS-CoV-2 transmission per contact between an infectious individual and a susceptible individual.  
+A value of 100% represents a situation where no public health and safety measures (PHSMs) are implemented. Values lower than 100% can be used to model the impact of implementing different combinations of PHSMs, including the use of face coverings, enhanced hand washing, and physical distancing.

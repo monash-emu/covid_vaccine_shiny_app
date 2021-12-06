@@ -1,0 +1,8 @@
+---
+title: "Info"
+output: html_document
+---
+
+
+### Coverage scenarios
+The proportion of the total population that has been fully vaccinated before the modelled epidemic starts.
