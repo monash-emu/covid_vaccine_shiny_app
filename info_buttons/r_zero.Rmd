@@ -1,0 +1,21 @@
+---
+title: "Explanatory notes"
+output: html_document
+---
+
+
+### Modelled situation
+This application aims to use mathematical modelling to estimate the size of a COVID-19 epidemic that occurs in the presence of pre-existing population immunity. We consider a population that includes fully vaccinated individuals, persons who have previously experienced SARS-CoV-2 infection resulting in immunity and fully-susceptible individuals (i.e. infection-naïve and not vaccinated). We assume that an epidemic occurs in this partially immune population, and the tool estimates the final size of the epidemic in terms of total numbers of infections, hospitalisations and deaths. Note that the level of vaccination is assumed to remain unchanged for the duration of the epidemic.
+
+### Model inputs
+The interface allows the user to select basic characteristics of the virus and population (strain, R_0). The level of pre-existing infection-induced immunity is then set using age-specific input sliders defining the proportion previously infected with SARS-CoV-2 for each age group.
+The vaccination program’s characteristics are defined by selecting the type of vaccine used and the minimum age for vaccine eligibility.
+Finally, the user can define two different scenarios considering various levels of population-level vaccine coverage.
+
+### Model outputs
+The tool produces estimates of the final epidemic size under the two selected scenarios. These outputs are presented as cumulative numbers of infections, hospitalisations and deaths over the entire epidemic. 
+For each vaccine coverage scenario, the model considers three different vaccine allocation strategies:
+-	Uniform: the same vaccine coverage is used for all eligible age groups
+-	Vulnerable: individuals aged 55 years old and over receive vaccines first
+-	Transmitters: individuals aged under 55 years old receive vaccines first
+Under the two age-targeted strategies (“Vulnerable” and “Transmitters”), the available vaccine doses are administered to the prioritised group first (“55 and over” and “under 55”, respectively), and the other individuals only receive vaccines once the entire prioritised group is vaccinated.

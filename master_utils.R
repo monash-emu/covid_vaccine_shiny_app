@@ -511,3 +511,20 @@ get_default_vacc_perc <- function(n, i){
   }
   
 }
+
+
+make_info_button <- function(name){
+  
+  text_path = paste0("./info_buttons/", name, ".Rmd")
+  
+  dropdownButton(
+    includeMarkdown(text_path),
+  #tags$h3("Text here"),
+  
+    size="xs",
+    circle = TRUE, status = "danger",
+    icon = icon("info"),
+    width="10%"
+  
+  )
+}

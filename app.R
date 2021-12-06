@@ -60,14 +60,7 @@ ui <- fluidPage(
         ),
         column(
           1,
-          dropdownButton(
-            tags$h3("Text here"),
-            
-            size="xs",
-            circle = TRUE, status = "danger",
-            icon = icon("info")
-            
-          )
+          make_info_button("r_zero")
         )
       ),
       
