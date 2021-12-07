@@ -45,6 +45,12 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel( style = "background-color: #FEF4E8;", width = 4,
 
+      # selectInput(
+      #   "country",
+      #   "Country:",
+      #   countrypops
+      # ),
+                  
       h2("Epidemiological Situation"),
       
       selectInput("strain",
@@ -82,7 +88,7 @@ ui <- fluidPage(
         column(
           11,
           sliderInput('microdistancing',
-                      "Relative transmission risk per contact (reduced by individual preventive measures such as masks or hand washing). 100% = no preventive measure",
+                      "Relative transmission risk per contact",
                       0,100,80,step=5,post  = " %")
         ),
         column(
@@ -302,7 +308,7 @@ server <- function(input, output) {
   output$vacc_perc_ui <- renderUI({ vacc_perc_selectors() })
   
   
-  c1 <- reactive(get_params(country = "Philippines",
+  c1 <- reactive(get_params(country = "Philippines",  #  input$country,
                             vacc_program=vacc_program(),
                             strain=input$strain,
                             R0 = input$R0 * (input$mobility /100.) * (input$microdistancing /100.),
