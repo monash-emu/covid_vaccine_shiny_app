@@ -4,12 +4,14 @@
 
 
 
-vaccination_strategies = c("Uniform",
-                           "Vulnerable",
-                           "Transmitters")
+vaccination_strategies <- c(
+  "Uniform",
+  "Vulnerable",
+  "Transmitters"
+)
 
 
-age_groups = c(
+age_groups <- c(
   "0-4",
   "5-9",
   "10-14",
@@ -29,29 +31,29 @@ age_groups = c(
 )
 
 
-calc_age_specific_coverage_over_15 = function(target_coverage,
-                                              params,
-                                              strategy = "Uniform",
-                                              uptake = 1.0) {
+calc_age_specific_coverage_over_15 <- function(target_coverage,
+                                               params,
+                                               strategy = "Uniform",
+                                               uptake = 1.0) {
   if (is.numeric(strategy)) {
-    age_group_priorities = strategy
-    names(age_group_priorities) = age_groups
+    age_group_priorities <- strategy
+    names(age_group_priorities) <- age_groups
   }
   else if (is.character(strategy) || is.factor(strategy)) {
     if (strategy == "Uniform") {
       # Redistribute doses across only >15 year olds
-      effective_coverage = target_coverage * sum(params$population_size) / sum(params$population_size[4:16])
-      age_specific_coverage = c(0, 0, 0, rep(min(c(
+      effective_coverage <- target_coverage * sum(params$population_size) / sum(params$population_size[4:16])
+      age_specific_coverage <- c(0, 0, 0, rep(min(c(
         uptake, effective_coverage, 1
       )), 13))
-      names(age_specific_coverage) = age_groups
+      names(age_specific_coverage) <- age_groups
       return(age_specific_coverage)
     }
     else if (strategy == "Vulnerable") {
-      age_group_priorities = c(
-        #"0-4" = Inf,
-        #"5-9" = Inf,
-        #"10-14" = Inf,
+      age_group_priorities <- c(
+        # "0-4" = Inf,
+        # "5-9" = Inf,
+        # "10-14" = Inf,
         "15-19" = 2,
         "20-24" = 2,
         "25-29" = 2,
@@ -68,10 +70,10 @@ calc_age_specific_coverage_over_15 = function(target_coverage,
       )
     }
     else if (strategy == "Transmitters") {
-      age_group_priorities = c(
-        #"0-4" = NA,
-        #"5-9" = NA,
-        #"10-14" = NA,
+      age_group_priorities <- c(
+        # "0-4" = NA,
+        # "5-9" = NA,
+        # "10-14" = NA,
         "15-19" = 1,
         "20-24" = 1,
         "25-29" = 1,
@@ -89,73 +91,70 @@ calc_age_specific_coverage_over_15 = function(target_coverage,
     }
   }
   # Initialize age-specific coverage vector
-  age_specific_coverage = rep(0, 16)
-  names(age_specific_coverage) = age_groups
-  
+  age_specific_coverage <- rep(0, 16)
+  names(age_specific_coverage) <- age_groups
+
   # Initialize priority group
-  priority = 0
-  
-  with(params,
-       {
-         # Step 1. Convert target population-level coverage to number of available doses
-         doses_available = round(target_coverage * sum(population_size))
-         
-         # Whilst available doses remain work through remaining priority groups
-         while (doses_available > 0 &&
-                priority < max(age_group_priorities, na.rm = TRUE)) {
-           # Set current priority group
-           priority = priority + 1
-           priority_age_groups = names(age_group_priorities[age_group_priorities == priority])
-           priority_group_size = sum(population_size[priority_age_groups])
-           
-           # Calculate number of doses required to achieve full uptake in current priority group
-           doses_needed = uptake * priority_group_size
-           
-           # If enough doses are available, set coverage to full uptake
-           if (doses_available >= doses_needed) {
-             # print("Enough doses available for current group")
-             age_specific_coverage[priority_age_groups] = uptake
-             
-           }
-           # If not, maximize coverage evenly across currently prioritized age groups using available doses
-           else{
-             # print("Not enough doses available for current group")
-             age_specific_coverage[priority_age_groups] = doses_available / priority_group_size
-           }
-           
-           # Calculate the number of doses remaining after latest distribution
-           doses_available = doses_available - doses_needed
-         }
-         return(age_specific_coverage)
-         
-       })
+  priority <- 0
+
+  with(params, {
+    # Step 1. Convert target population-level coverage to number of available doses
+    doses_available <- round(target_coverage * sum(population_size))
+
+    # Whilst available doses remain work through remaining priority groups
+    while (doses_available > 0 &&
+      priority < max(age_group_priorities, na.rm = TRUE)) {
+      # Set current priority group
+      priority <- priority + 1
+      priority_age_groups <- names(age_group_priorities[age_group_priorities == priority])
+      priority_group_size <- sum(population_size[priority_age_groups])
+
+      # Calculate number of doses required to achieve full uptake in current priority group
+      doses_needed <- uptake * priority_group_size
+
+      # If enough doses are available, set coverage to full uptake
+      if (doses_available >= doses_needed) {
+        # print("Enough doses available for current group")
+        age_specific_coverage[priority_age_groups] <- uptake
+      }
+      # If not, maximize coverage evenly across currently prioritized age groups using available doses
+      else {
+        # print("Not enough doses available for current group")
+        age_specific_coverage[priority_age_groups] <- doses_available / priority_group_size
+      }
+
+      # Calculate the number of doses remaining after latest distribution
+      doses_available <- doses_available - doses_needed
+    }
+    return(age_specific_coverage)
+  })
 }
 
 
 
 
-calc_age_specific_coverage_over_10 = function(target_coverage,
-                                              params,
-                                              strategy = "Uniform",
-                                              uptake = 1.0) {
+calc_age_specific_coverage_over_10 <- function(target_coverage,
+                                               params,
+                                               strategy = "Uniform",
+                                               uptake = 1.0) {
   if (is.numeric(strategy)) {
-    age_group_priorities = strategy
-    names(age_group_priorities) = age_groups
+    age_group_priorities <- strategy
+    names(age_group_priorities) <- age_groups
   }
   else if (is.character(strategy) || is.factor(strategy)) {
     if (strategy == "Uniform") {
       # Redistribute doses across only >5 year olds
-      effective_coverage = target_coverage * sum(params$population_size) / sum(params$population_size[3:16])
-      age_specific_coverage = c(0, 0, rep(min(c(
+      effective_coverage <- target_coverage * sum(params$population_size) / sum(params$population_size[3:16])
+      age_specific_coverage <- c(0, 0, rep(min(c(
         uptake, effective_coverage, 1
       )), 14))
-      names(age_specific_coverage) = age_groups
+      names(age_specific_coverage) <- age_groups
       return(age_specific_coverage)
     }
     else if (strategy == "Vulnerable") {
-      age_group_priorities = c(
-        #"0-4" = NA,
-        #"5-9" = 2,
+      age_group_priorities <- c(
+        # "0-4" = NA,
+        # "5-9" = 2,
         "10-14" = 2,
         "15-19" = 2,
         "20-24" = 2,
@@ -173,9 +172,9 @@ calc_age_specific_coverage_over_10 = function(target_coverage,
       )
     }
     else if (strategy == "Transmitters") {
-      age_group_priorities = c(
-        #"0-4" = NA,
-        #"5-9" = 1,
+      age_group_priorities <- c(
+        # "0-4" = NA,
+        # "5-9" = 1,
         "10-14" = 1,
         "15-19" = 1,
         "20-24" = 1,
@@ -194,72 +193,69 @@ calc_age_specific_coverage_over_10 = function(target_coverage,
     }
   }
   # Initialize age-specific coverage vector
-  age_specific_coverage = rep(0, 16)
-  names(age_specific_coverage) = age_groups
-  
+  age_specific_coverage <- rep(0, 16)
+  names(age_specific_coverage) <- age_groups
+
   # Initialize priority group
-  priority = 0
-  
-  with(params,
-       {
-         # Step 1. Convert target population-level coverage to number of available doses
-         doses_available = round(target_coverage * sum(population_size))
-         
-         # Whilst available doses remain work through remaining priority groups
-         while (doses_available > 0 &&
-                priority < max(age_group_priorities, na.rm = TRUE)) {
-           # Set current priority group
-           priority = priority + 1
-           priority_age_groups = names(age_group_priorities[age_group_priorities == priority])
-           priority_group_size = sum(population_size[priority_age_groups])
-           
-           # Calculate number of doses required to achieve full uptake in current priority group
-           doses_needed = uptake * priority_group_size
-           
-           # If enough doses are available, set coverage to full uptake
-           if (doses_available >= doses_needed) {
-             # print("Enough doses available for current group")
-             age_specific_coverage[priority_age_groups] = uptake
-             
-           }
-           # If not, maximize coverage evenly across currently prioritized age groups using available doses
-           else{
-             # print("Not enough doses available for current group")
-             age_specific_coverage[priority_age_groups] = doses_available / priority_group_size
-           }
-           
-           # Calculate the number of doses remaining after latest distribution
-           doses_available = doses_available - doses_needed
-         }
-         return(age_specific_coverage)
-         
-       })
+  priority <- 0
+
+  with(params, {
+    # Step 1. Convert target population-level coverage to number of available doses
+    doses_available <- round(target_coverage * sum(population_size))
+
+    # Whilst available doses remain work through remaining priority groups
+    while (doses_available > 0 &&
+      priority < max(age_group_priorities, na.rm = TRUE)) {
+      # Set current priority group
+      priority <- priority + 1
+      priority_age_groups <- names(age_group_priorities[age_group_priorities == priority])
+      priority_group_size <- sum(population_size[priority_age_groups])
+
+      # Calculate number of doses required to achieve full uptake in current priority group
+      doses_needed <- uptake * priority_group_size
+
+      # If enough doses are available, set coverage to full uptake
+      if (doses_available >= doses_needed) {
+        # print("Enough doses available for current group")
+        age_specific_coverage[priority_age_groups] <- uptake
+      }
+      # If not, maximize coverage evenly across currently prioritized age groups using available doses
+      else {
+        # print("Not enough doses available for current group")
+        age_specific_coverage[priority_age_groups] <- doses_available / priority_group_size
+      }
+
+      # Calculate the number of doses remaining after latest distribution
+      doses_available <- doses_available - doses_needed
+    }
+    return(age_specific_coverage)
+  })
 }
 
 
 
 
-calc_age_specific_coverage_over_5 = function(target_coverage,
-                                             params,
-                                             strategy = "Uniform",
-                                             uptake = 1.0) {
+calc_age_specific_coverage_over_5 <- function(target_coverage,
+                                              params,
+                                              strategy = "Uniform",
+                                              uptake = 1.0) {
   if (is.numeric(strategy)) {
-    age_group_priorities = strategy
-    names(age_group_priorities) = age_groups
+    age_group_priorities <- strategy
+    names(age_group_priorities) <- age_groups
   }
   else if (is.character(strategy) || is.factor(strategy)) {
     if (strategy == "Uniform") {
       # Redistribute doses across only >5 year olds
-      effective_coverage = target_coverage * sum(params$population_size) / sum(params$population_size[2:16])
-      age_specific_coverage = c(0, rep(min(c(
+      effective_coverage <- target_coverage * sum(params$population_size) / sum(params$population_size[2:16])
+      age_specific_coverage <- c(0, rep(min(c(
         uptake, effective_coverage, 1
       )), 15))
-      names(age_specific_coverage) = age_groups
+      names(age_specific_coverage) <- age_groups
       return(age_specific_coverage)
     }
     else if (strategy == "Vulnerable") {
-      age_group_priorities = c(
-        #"0-4" = NA,
+      age_group_priorities <- c(
+        # "0-4" = NA,
         "5-9" = 2,
         "10-14" = 2,
         "15-19" = 2,
@@ -278,8 +274,8 @@ calc_age_specific_coverage_over_5 = function(target_coverage,
       )
     }
     else if (strategy == "Transmitters") {
-      age_group_priorities = c(
-        #"0-4" = NA,
+      age_group_priorities <- c(
+        # "0-4" = NA,
         "5-9" = 1,
         "10-14" = 1,
         "15-19" = 1,
@@ -299,44 +295,41 @@ calc_age_specific_coverage_over_5 = function(target_coverage,
     }
   }
   # Initialize age-specific coverage vector
-  age_specific_coverage = rep(0, 16)
-  names(age_specific_coverage) = age_groups
-  
+  age_specific_coverage <- rep(0, 16)
+  names(age_specific_coverage) <- age_groups
+
   # Initialize priority group
-  priority = 0
-  
-  with(params,
-       {
-         # Step 1. Convert target population-level coverage to number of available doses
-         doses_available = round(target_coverage * sum(population_size))
-         
-         # Whilst available doses remain work through remaining priority groups
-         while (doses_available > 0 &&
-                priority < max(age_group_priorities, na.rm = TRUE)) {
-           # Set current priority group
-           priority = priority + 1
-           priority_age_groups = names(age_group_priorities[age_group_priorities == priority])
-           priority_group_size = sum(population_size[priority_age_groups])
-           
-           # Calculate number of doses required to achieve full uptake in current priority group
-           doses_needed = uptake * priority_group_size
-           
-           # If enough doses are available, set coverage to full uptake
-           if (doses_available >= doses_needed) {
-             # print("Enough doses available for current group")
-             age_specific_coverage[priority_age_groups] = uptake
-             
-           }
-           # If not, maximize coverage evenly across currently prioritized age groups using available doses
-           else{
-             # print("Not enough doses available for current group")
-             age_specific_coverage[priority_age_groups] = doses_available / priority_group_size
-           }
-           
-           # Calculate the number of doses remaining after latest distribution
-           doses_available = doses_available - doses_needed
-         }
-         return(age_specific_coverage)
-         
-       })
+  priority <- 0
+
+  with(params, {
+    # Step 1. Convert target population-level coverage to number of available doses
+    doses_available <- round(target_coverage * sum(population_size))
+
+    # Whilst available doses remain work through remaining priority groups
+    while (doses_available > 0 &&
+      priority < max(age_group_priorities, na.rm = TRUE)) {
+      # Set current priority group
+      priority <- priority + 1
+      priority_age_groups <- names(age_group_priorities[age_group_priorities == priority])
+      priority_group_size <- sum(population_size[priority_age_groups])
+
+      # Calculate number of doses required to achieve full uptake in current priority group
+      doses_needed <- uptake * priority_group_size
+
+      # If enough doses are available, set coverage to full uptake
+      if (doses_available >= doses_needed) {
+        # print("Enough doses available for current group")
+        age_specific_coverage[priority_age_groups] <- uptake
+      }
+      # If not, maximize coverage evenly across currently prioritized age groups using available doses
+      else {
+        # print("Not enough doses available for current group")
+        age_specific_coverage[priority_age_groups] <- doses_available / priority_group_size
+      }
+
+      # Calculate the number of doses remaining after latest distribution
+      doses_available <- doses_available - doses_needed
+    }
+    return(age_specific_coverage)
+  })
 }
